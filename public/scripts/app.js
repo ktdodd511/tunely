@@ -46,19 +46,34 @@ $albums = $('#albums');
 var source = $('#album-template').html();
 template = Handlebars.compile(source);
 
-renderAlbum(sampleAlbums);
-
-});
-
-
-
 
 
 // this function takes a single album and renders it to the page
 function renderAlbum(album) {
-  var albumHtml = template( {album: albumsList} );
-  $albums.append(albumHtml);
-
+  album.forEach(function(album) {
   console.log('rendering album:', album);
-
+  var albumHtml = template(album);
+  $albums.prepend(albumHtml);
+  });
 }
+
+// get the albums
+$.ajax({
+  method: 'GET',
+  url: '/api/albums',
+  success: handleSuccess,
+  error: handleError
+});
+
+
+function handleSuccess(albums) {
+  renderAlbum(albums);
+}
+
+
+function handleError(err) {
+  console.log(err);
+}
+
+
+});
