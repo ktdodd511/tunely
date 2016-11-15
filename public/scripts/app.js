@@ -5,6 +5,7 @@
  *
  */
 
+allAlbums = [];
 
 $(document).ready(function() {
   console.log('app.js loaded!');
@@ -30,6 +31,7 @@ $('.form-horizontal').on('submit', function(e) {
     success: newAlbumSuccess,
     error: newAlbumError
   });
+  $(this).trigger("reset");
 });
 
 // this function takes a single album and renders it to the page
@@ -37,21 +39,15 @@ function renderAlbum(album) {
   console.log('rendering album:', album);
   album.forEach(function(album) {
     var source = $('#album-template').html();
-    var template = Handlebars.compile(source);
+    var template = Handlebars.compile(source)
     var albumHtml = template(album);
     $albums.prepend(albumHtml);
   });
 }
 
 
-function handleSuccess(album) {
-  console.log(album + " yay!");
-  $('.form-horizontal input').val('');
-  var source = $('#album-template').html();
-  var template = Handlebars.compile(source);
-  var albumHtml = template(album);
-  $albums.prepend(album);
-
+function handleSuccess(albums) {
+  renderAlbum(albums);
 }
 
 
@@ -61,6 +57,7 @@ function handleError(err) {
 
 function newAlbumSuccess(json) {
   $('.form-horizontal input').val('');
+  allAlbums.push(json);
   renderAlbum(json);
 }
 
