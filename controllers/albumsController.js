@@ -16,7 +16,8 @@ function index(req, res) {
 };
 
 function create(req, res) {
-  // FILL ME IN !
+  res.json(album);
+  console.log(album);
 }
 
 function show(req, res) {

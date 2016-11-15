@@ -6,56 +6,11 @@
  */
 
 
-/* hard-coded data! */
-var sampleAlbums = [];
-sampleAlbums.push({
-             artistName: 'Ladyhawke',
-             name: 'Ladyhawke',
-             releaseDate: '2008, November 18',
-             genres: [ 'new wave', 'indie rock', 'synth pop' ]
-           });
-sampleAlbums.push({
-             artistName: 'The Knife',
-             name: 'Silent Shout',
-             releaseDate: '2006, February 17',
-             genres: [ 'synth pop', 'electronica', 'experimental' ]
-           });
-sampleAlbums.push({
-             artistName: 'Juno Reactor',
-             name: 'Shango',
-             releaseDate: '2000, October 9',
-             genres: [ 'electronic', 'goa trance', 'tribal house' ]
-           });
-sampleAlbums.push({
-             artistName: 'Philip Wesley',
-             name: 'Dark Night of the Soul',
-             releaseDate: '2008, September 12',
-             genres: [ 'piano' ]
-           });
-/* end of hard-coded data */
-
-
-var template;
-var $albums;
-
 $(document).ready(function() {
   console.log('app.js loaded!');
 
-$albums = $('#albums');
+var $albums = $('#albums');
 
-var source = $('#album-template').html();
-template = Handlebars.compile(source);
-
-
-
-// this function takes a single album and renders it to the page
-function renderAlbum(album) {
-  album.forEach(function(album) {
-  console.log('rendering album:', album);
-  var albumHtml = template(album);
-  $albums.prepend(albumHtml);
-  });
-}
 
 // get the albums
 $.ajax({
@@ -65,14 +20,52 @@ $.ajax({
   error: handleError
 });
 
+$('.form-horizontal').on('submit', function(e) {
+  e.preventDefault();
+  console.log('New album created', $(this).serialize());
+  $.ajax({
+    method: 'POST',
+    url: '/api/albums',
+    data: $(this).serialize(),
+    success: newAlbumSuccess,
+    error: newAlbumError
+  });
+});
 
-function handleSuccess(albums) {
-  renderAlbum(albums);
+// this function takes a single album and renders it to the page
+function renderAlbum(album) {
+  console.log('rendering album:', album);
+  album.forEach(function(album) {
+    var source = $('#album-template').html();
+    var template = Handlebars.compile(source);
+    var albumHtml = template(album);
+    $albums.prepend(albumHtml);
+  });
+}
+
+
+function handleSuccess(album) {
+  console.log(album + " yay!");
+  $('.form-horizontal input').val('');
+  var source = $('#album-template').html();
+  var template = Handlebars.compile(source);
+  var albumHtml = template(album);
+  $albums.prepend(album);
+
 }
 
 
 function handleError(err) {
   console.log(err);
+}
+
+function newAlbumSuccess(json) {
+  $('.form-horizontal input').val('');
+  renderAlbum(json);
+}
+
+function newAlbumError() {
+  console.log("error: " + "new album not created");
 }
 
 

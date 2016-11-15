@@ -5,6 +5,11 @@ var express = require('express');
 // generate a new express app and call it 'app'
 var app = express();
 
+
+// parse incoming urlencoded form data
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: true}));
+
 // serve static files from public folder
 app.use(express.static(__dirname + '/public'));
 
@@ -34,8 +39,10 @@ app.get('/', function homepage (req, res) {
 
 app.get('/api', controllers.api.index);
 
-
 app.get('/api/albums', controllers.albums.index);
+
+app.post('/api/albums', controllers.albums.index);
+
 
 /**********
  * SERVER *
